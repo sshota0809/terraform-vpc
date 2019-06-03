@@ -1,9 +1,9 @@
 variable "cidr_block" {
-  type = "string"
+  type        = "string"
   description = "cidr block of vpc"
 }
 
 variable "tag" {
-  type = "map"
+  type        = "map"
   description = "tag list of vpc"
 }

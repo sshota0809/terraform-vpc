@@ -1,5 +1,4 @@
 terraform {
-
   backend "s3" {
     bucket = "YOUR BUCKET NAME"
     key    = "YOUR OBJECT KEY"
@@ -19,7 +18,7 @@ module "vpc" {
   source = "./module/vpc/base"
 
   cidr_block = "${var.vpc_cidr_block}"
-  tag = "${var.vpc_tag}"
+  tag        = "${var.vpc_tag}"
 }
 
 ############################
@@ -28,10 +27,10 @@ module "vpc" {
 module "vpc_public_subnet" {
   source = "./module/vpc/subnet"
 
-  count = "${length(var.vpc_public_subnet_list)}"
-  vpc_id = "${module.vpc.id}"
+  count       = "${length(var.vpc_public_subnet_list)}"
+  vpc_id      = "${module.vpc.id}"
   subnet_list = "${var.vpc_public_subnet_list}"
-  tag_list = "${var.vpc_public_subnet_tag_list}"
+  tag_list    = "${var.vpc_public_subnet_tag_list}"
 }
 
 #############################
@@ -40,10 +39,10 @@ module "vpc_public_subnet" {
 module "vpc_private_subnet" {
   source = "./module/vpc/subnet"
 
-  count = "${length(var.vpc_private_subnet_list)}"
-  vpc_id = "${module.vpc.id}"
+  count       = "${length(var.vpc_private_subnet_list)}"
+  vpc_id      = "${module.vpc.id}"
   subnet_list = "${var.vpc_private_subnet_list}"
-  tag_list = "${var.vpc_private_subnet_tag_list}"
+  tag_list    = "${var.vpc_private_subnet_tag_list}"
 }
 
 ###############################
@@ -52,8 +51,8 @@ module "vpc_private_subnet" {
 module "vpc_internet_gateway" {
   source = "./module/vpc/internet_gateway"
 
-  count = "${length(var.vpc_internet_gateway_tag_list)}"
-  vpc_id = "${module.vpc.id}"
+  count    = "${length(var.vpc_internet_gateway_tag_list)}"
+  vpc_id   = "${module.vpc.id}"
   tag_list = "${var.vpc_internet_gateway_tag_list}"
 }
 
@@ -63,7 +62,7 @@ module "vpc_internet_gateway" {
 module "vpc_eip" {
   source = "./module/vpc/eip"
 
-  count = "${length(var.vpc_eip_tag_list)}"
+  count    = "${length(var.vpc_eip_tag_list)}"
   tag_list = "${var.vpc_eip_tag_list}"
 }
 
@@ -73,10 +72,10 @@ module "vpc_eip" {
 module "vpc_nat_gateway" {
   source = "./module/vpc/nat_gateway"
 
-  count = "${length(var.vpc_eip_tag_list)}"
-  eip_id_list = "${module.vpc_eip.id}"
+  count          = "${length(var.vpc_eip_tag_list)}"
+  eip_id_list    = "${module.vpc_eip.id}"
   subnet_id_list = "${module.vpc_public_subnet.id}"
-  tag_list = "${var.vpc_nat_gateway_tag_list}"
+  tag_list       = "${var.vpc_nat_gateway_tag_list}"
 }
 
 #################################
@@ -85,8 +84,8 @@ module "vpc_nat_gateway" {
 module "vpc_public_route_table" {
   source = "./module/vpc/route_table"
 
-  count = "${length(var.vpc_public_route_table_tag_list)}"
-  vpc_id = "${module.vpc.id}"
+  count    = "${length(var.vpc_public_route_table_tag_list)}"
+  vpc_id   = "${module.vpc.id}"
   tag_list = "${var.vpc_public_route_table_tag_list}"
 }
 
@@ -96,8 +95,8 @@ module "vpc_public_route_table" {
 module "vpc_private_route_table" {
   source = "./module/vpc/route_table"
 
-  count = "${length(var.vpc_private_route_table_tag_list)}"
-  vpc_id = "${module.vpc.id}"
+  count    = "${length(var.vpc_private_route_table_tag_list)}"
+  vpc_id   = "${module.vpc.id}"
   tag_list = "${var.vpc_private_route_table_tag_list}"
 }
 
@@ -107,18 +106,19 @@ module "vpc_private_route_table" {
 module "vpc_public_route_internet_gateway" {
   source = "./module/vpc/route/gateway"
 
-  count = "${length(var.vpc_public_route_table_tag_list)}"
-  route_table_id_list = "${module.vpc_public_route_table.id}"
+  count                    = "${length(var.vpc_public_route_table_tag_list)}"
+  route_table_id_list      = "${module.vpc_public_route_table.id}"
   destination_gateway_list = "${module.vpc_internet_gateway.id}"
 }
+
 ################################
 ### deploy route nat gateway ###
 ################################
 module "vpc_private_route_nat_gateway" {
   source = "./module/vpc/route/nat_gateway"
 
-  count = "${length(var.vpc_private_route_table_tag_list)}"
-  route_table_id_list = "${module.vpc_private_route_table.id}"
+  count                        = "${length(var.vpc_private_route_table_tag_list)}"
+  route_table_id_list          = "${module.vpc_private_route_table.id}"
   destination_nat_gateway_list = "${module.vpc_nat_gateway.id}"
 }
 
@@ -128,8 +128,8 @@ module "vpc_private_route_nat_gateway" {
 module "vpc_public_route_tables_association" {
   source = "./module/vpc/route_table_association/one_to_many"
 
-  count = "${length(var.vpc_public_subnet_list)}"
-  subnet_id_list = "${module.vpc_public_subnet.id}"
+  count               = "${length(var.vpc_public_subnet_list)}"
+  subnet_id_list      = "${module.vpc_public_subnet.id}"
   route_table_id_list = "${module.vpc_public_route_table.id}"
 }
 
@@ -139,7 +139,7 @@ module "vpc_public_route_tables_association" {
 module "vpc_private_route_tables_association" {
   source = "./module/vpc/route_table_association/one_to_one"
 
-  count = "${length(var.vpc_private_subnet_list)}"
-  subnet_id_list = "${module.vpc_private_subnet.id}"
+  count               = "${length(var.vpc_private_subnet_list)}"
+  subnet_id_list      = "${module.vpc_private_subnet.id}"
   route_table_id_list = "${module.vpc_private_route_table.id}"
 }
