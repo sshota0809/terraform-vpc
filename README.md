@@ -2,9 +2,6 @@
 terraform の vpc デプロイ用テンプレート。
 vpc のデプロイを支援する各 module を利用することで各 function のデプロイが可能。
 
----------------------------------------
----------------------------------------
-
 ## Features
 提供している module の一覧
   * [vpc/base](#vpc/base)
@@ -187,3 +184,8 @@ subnet と route table の紐づけ機能を提供（subnet : ルートテーブ
 * output
   * id `type = list`
     * デプロイしたリソースの id を出力
+
+## Sample
+事前に用意している `main.tf` は下記リソースをデプロイします。
+
+![vpc](https://user-images.githubusercontent.com/8736380/58780907-55987200-8615-11e9-8ad7-27b2fc7aa4ab.jpg)
